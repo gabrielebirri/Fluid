@@ -1,0 +1,32 @@
+# VS Code
+.vscode/
+.history/
+*.code-workspace
+*.jpg
+*.png
+*.jpeg
+.cache/
+sim_output/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+.DS_Store
+
+# venv
+venv/
+env/
+.env/
+
+# PyTorch
+*.pth
+*.h5
+
+# Dataset
+data/
+*.zip
+*.tar
+*.gz
+*.pdf
