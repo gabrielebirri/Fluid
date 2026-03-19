@@ -14,7 +14,7 @@ from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
-from phi.flow import (
+from phi.torch.flow import (
     CenteredGrid, StaggeredGrid, Box, Sphere, Obstacle,
     extrapolation, fluid, advect, diffuse,
     spatial, batch,
@@ -54,13 +54,10 @@ def run_simulation(cfg: Optional[SimConfig] = None, tensor_name: str = "simulati
     if num_steps is not None:
         cfg.num_steps = num_steps
 
-    print("=" * 55)
-    print("  SIMULAZIONE FLUIDODINAMICA — PhiFlow")
-    print(f"  Risoluzione : {cfg.resolution_x} × {cfg.resolution_y}")
-    print(f"  Steps       : {cfg.num_steps}  |  dt = {cfg.dt} s")
-    print(f"  Viscosità   : {cfg.viscosity:.6f}")
-    print(f"  Output dir  : {cfg.output_dir}")
-    print("=" * 55)
+    print("=" * 75)
+    print(f"  Res: {cfg.resolution_x}x{cfg.resolution_y} | Steps: {cfg.num_steps} | dt: {cfg.dt}s | Visc: {cfg.viscosity:.6f}")
+    print(f"  Out: {cfg.output_dir}")
+    print("=" * 75)
 
     # Inizializzazione
     bounds    = build_domain_bounds(cfg)
@@ -100,16 +97,11 @@ def run_simulation(cfg: Optional[SimConfig] = None, tensor_name: str = "simulati
         })
 
     total = time.perf_counter() - total_start
-    print("-" * 55)
-    print(f"  Simulazione completata in {total:.1f} s")
-
-    save_summary(stats, cfg)
     
     # Save the final tensor
     final_tensor = np.stack(tensor_frames, axis=0)
     out_path = os.path.join(cfg.output_dir, tensor_name)
     np.save(out_path, final_tensor)
     
-    print(f"  Tensore simulazione salvato in: {out_path} con shape {final_tensor.shape}")
-    print("=" * 55)
+    print(f"  Tensor saved in: {out_path} with shape {final_tensor.shape}")
 

@@ -13,12 +13,17 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
-from phi.flow import (
+from phi.torch.flow import (
     CenteredGrid, StaggeredGrid, Box, Sphere, Obstacle,
     extrapolation, fluid, advect, diffuse,
     spatial, batch,
 )
 import phi.math as math
+
+if torch.backends.mps.is_available():
+    torch.set_default_device("mps")
+elif torch.cuda.is_available():
+    torch.set_default_device("cuda")
 
 @dataclass
 class SimConfig:
@@ -62,7 +67,8 @@ def generate_random_config() -> SimConfig:
     il generatore di numeri casuali di PyTorch, permettendo la riproducibilità.
     """
     # 1. Estrae un seed univoco da PyTorch per derivarne gli stati degli altri framework
-    new_seed = int(torch.randint(0, 2**32 - 1, (1,)).item())
+    # Limitiamo a 2**31 - 1 per evitare overflow di int32 su device MPS
+    new_seed = abs(int(torch.randint(0, 2**31 - 1, (1,)).item()))
     
     # 2. Genera una velocità di lancio casuale compresa ad es. tra 2.0 e 8.0 usando PyTorch
     vel_x = float(torch.empty(1).uniform_(2.0, 8.0).item())

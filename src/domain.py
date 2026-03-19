@@ -13,7 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
-from phi.flow import (
+from phi.torch.flow import (
     CenteredGrid, StaggeredGrid, Box, Sphere, Obstacle,
     extrapolation, fluid, advect, diffuse,
     spatial, batch,
@@ -27,7 +27,8 @@ def build_obstacles(cfg: SimConfig) -> tuple:
     """Crea ostacoli casuali (Box o Sphere), anche più forme, con posizione e orientazione casuale."""
     import random
     
-    current_seed = cfg.seed if cfg.seed is not None else int(torch.initial_seed() % (2**32))
+    current_seed = cfg.seed if cfg.seed is not None else int(torch.initial_seed() % (2**31 - 1))
+    current_seed = abs(current_seed)
     np.random.seed(current_seed)
     random.seed(current_seed)
     

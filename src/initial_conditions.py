@@ -13,7 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
-from phi.flow import (
+from phi.torch.flow import (
     CenteredGrid, StaggeredGrid, Box, Sphere, Obstacle,
     extrapolation, fluid, advect, diffuse,
     spatial, batch,
