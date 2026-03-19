@@ -21,6 +21,7 @@ import math
 import torch
 import numpy as np
 import matplotlib
+from tqdm.auto import tqdm
 # matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
@@ -390,6 +391,7 @@ def run_simulation(cfg: Optional[SimConfig] = None, tensor_name: str = "simulati
     print("  SIMULAZIONE FLUIDODINAMICA — PhiFlow")
     print(f"  Risoluzione : {cfg.resolution_x} × {cfg.resolution_y}")
     print(f"  Steps       : {cfg.num_steps}  |  dt = {cfg.dt} s")
+    print(f"  Viscosità   : {cfg.viscosity:.6f}")
     print(f"  Output dir  : {cfg.output_dir}")
     print("=" * 55)
 
@@ -404,7 +406,8 @@ def run_simulation(cfg: Optional[SimConfig] = None, tensor_name: str = "simulati
     tensor_frames = []
     total_start = time.perf_counter()
 
-    for step in range(cfg.num_steps):
+    pbar = tqdm(range(cfg.num_steps), desc="Fluid Sim Progress")
+    for step in pbar:
         t0 = time.perf_counter()
 
         smoke, velocity, pressure = simulation_step(smoke, velocity, inflow, obstacles, cfg)
@@ -423,12 +426,11 @@ def run_simulation(cfg: Optional[SimConfig] = None, tensor_name: str = "simulati
         s = collect_stats(step + 1, smoke, velocity, elapsed)
         stats.append(s)
 
-        print(
-            f"  step {step+1:04d}/{cfg.num_steps}"
-            f"  |  v_max={s['max_velocity']:.4f} m/s"
-            f"  |  smoke_avg={s['avg_smoke']:.4f}"
-            f"  |  dt_calc={elapsed*1000:.1f} ms"
-        )
+        pbar.set_postfix({
+            'v_max': f"{s['max_velocity']:.4f}",
+            'smoke': f"{s['avg_smoke']:.4f}",
+            'dt_ms': f"{elapsed*1000:.1f}"
+        })
 
     total = time.perf_counter() - total_start
     print("-" * 55)
