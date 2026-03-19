@@ -67,7 +67,13 @@ def generate_random_config() -> SimConfig:
     # 2. Genera una velocità di lancio casuale compresa ad es. tra 2.0 e 8.0 usando PyTorch
     vel_x = float(torch.empty(1).uniform_(2.0, 8.0).item())
     
+    # 3. Viscosità random (mantenendo i valori bassi per evitare instabilità o divergenze nel solver)
+    max_visc = 0.0005
+    min_visc = 0.00005
+    rand_visc = float(torch.empty(1).uniform_(min_visc, max_visc).item())
+    
     return SimConfig(
         seed=new_seed,
         inflow_velocity_x=vel_x,
+        viscosity=rand_visc,
     )
